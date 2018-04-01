@@ -398,7 +398,9 @@
 
                 
                 // set zoom
-                svg                  
+                svg  
+                  .transition()
+                  .duration(500)                
                   .call(
                     zoom.transform,
                     d3.zoomIdentity.translate(dleft, dtop).scale(zoomScale)

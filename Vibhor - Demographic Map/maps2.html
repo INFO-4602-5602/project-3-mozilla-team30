@@ -35,9 +35,10 @@
     d3.selectAll("#items").on("click", function () { 
           selected = this.value;
           console.log(selected)
-          d3.select("#map-holder svg").remove();
-          d3.select("#legend-holder svg").remove();
-          plotData(selected);
+          //d3.select("#map-holder svg").remove();
+          //d3.select("#legend-holder svg").remove();
+          //plotData(selected);
+          changeData(selected);
        });
 
     plotData("Price")
@@ -71,7 +72,7 @@
     ;
 
     // apply zoom to countriesGroup
-    function zoomed() {
+    function zoomed() {            
        t = d3
           .event
           .transform
@@ -79,11 +80,19 @@
        countriesGroup.attr(
           "transform","translate(" + [t.x, t.y] + ")scale(" + t.k + ")"
        );
+       //console.log(zoomScaleForcountryLabel);
+       countryLabels.attr("transform",function(d){
+                      transformContent = d3.select(this).attr("transform");                                        
+                      transformContent = transformContent.substr(0,transformContent.indexOf("scale"))
+                      transformContent += "scale("+(1.0/t.k).toString()+")";                                          
+                      console.log(transformContent);
+                      return transformContent;                                    
+                    });
     }
 
     // Define map zoom behaviour
-    var zoom = d3
-       .zoom()
+    var zoom = d3       
+       .zoom()       
        .on("zoom", zoomed)
     ;
 
@@ -92,6 +101,62 @@
         d.bbox = this.getBBox();
       });
     }    
+
+    function changeData(item) {
+      d3.csv("MyDataExport.csv",function(data){
+
+        countriesData = {};
+        minVal = 100.0; // Value of percentage
+        maxVal = 0.0;
+        
+
+        data.forEach(function(d){
+            val = parseFloat(d[item]);
+            countriesData[d['country']] = val;
+            if(val < minVal) minVal = val;
+            if(val > maxVal) maxVal = val;
+        });          
+        minVal = minVal.toFixed(0);
+        maxVal = maxVal.toFixed(0);
+        console.log(minVal,maxVal,countriesData);  
+
+        var color = d3.scaleLinear().range(["blue", "red"]);
+        color.domain([minVal,maxVal]);
+
+        d3.selectAll(".country")
+          .transition()
+          .duration(500)
+          .style("fill",function(d) {
+              countryName = d3.select(this).attr("countryName");
+              if (countryName in countriesData)
+                return color(countriesData[d.properties.name]);
+              else
+                return "white";
+           });
+
+        d3.selectAll('.countryName')
+          .text(function(d) {
+              countryName = d3.select(this).attr("countryName");
+              if (countryName in countriesData)
+                return (countryName+': '+countriesData[countryName].toString()+"%");
+              else
+                return countryName;                  
+           })
+           .call(getTextBox);
+
+
+        d3.select('#map-legend #legend-min-text')
+          .transition()
+          .duration(500)
+          .text(minVal+'%');    
+
+        d3.select('#map-legend #legend-max-text')
+          .transition()
+          .duration(500)
+          .text(maxVal+'%');    
+
+      });
+    }
 
     function plotData(item) {      
 
@@ -174,6 +239,9 @@
                     else
                       return "white";
                  })
+                 .attr("countryName",function(d) {
+                    return d.properties.name;
+                 })
                  .attr("class", "country")
                  // add a mouseover action to show name label for feature/country
                  .on("mouseover", function(d, i) {
@@ -183,11 +251,7 @@
                     d3.select("#countryLabel" + d.properties.iso_a3).style("display", "none");
                  })
                  // add an onclick action to zoom into clicked country
-                 .on("click", function(d, i) {
-                    if (!isZoomInitialized) {
-                      initiateZoom();        
-                      isZoomInitialized = true;          
-                    }
+                 .on("click", function(d, i) {                    
                     d3.selectAll(".country").classed("country-on", false);
                     d3.select(this).classed("country-on", true);
                     boxZoom(path.bounds(d), path.centroid(d), 20);
@@ -217,11 +281,7 @@
                      d3.select(this).style("display", "none");
                  })   
                  // add an onlcick action to zoom into clicked country
-                 .on("click", function(d, i) {
-                    if (!isZoomInitialized) {
-                      initiateZoom();
-                      isZoomInitialized = true;
-                    }
+                 .on("click", function(d, i) {                    
                     d3.selectAll(".country").classed("country-on", false);
                     d3.select("#country" + d.properties.iso_a3).classed("country-on", true);
                     boxZoom(path.bounds(d), path.centroid(d), 20);
@@ -233,6 +293,9 @@
                  .append("text")
                  .attr("class", "countryName")
                  .style("text-anchor", "middle")
+                 .attr("countryName",function(d) {
+                    return d.properties.name;
+                 })
                  .attr('fill','White')               
                  //.attr("font-weight", "bold")
                  .attr("dx", 0)
@@ -262,6 +325,11 @@
                  })
               ;
 
+              if (!isZoomInitialized) {
+                      initiateZoom();
+                      isZoomInitialized = true;
+              }
+
               // on window resize
               $(window).resize(function() {
                  // Resize SVG
@@ -269,7 +337,7 @@
                     .attr("width", $("#map-holder").width())
                     .attr("height", $("#map-holder").height())
                  ;
-                 initiateZoom();
+                 //initiateZoom();
               });
 
               function initiateZoom(){
@@ -328,7 +396,17 @@
                 if (zoomScaleForcountryLabel > 1.0)
                   zoomScaleForcountryLabel = 1.0
 
-                console.log(zoomScaleForcountryLabel);
+                
+                // set zoom
+                svg                  
+                  .call(
+                    zoom.transform,
+                    d3.zoomIdentity.translate(dleft, dtop).scale(zoomScale)
+                  );
+                  //.selectAll();
+                  
+
+                /*console.log(zoomScaleForcountryLabel);
                 if (!isNaN(zoomScaleForcountryLabel)) {
                   d3.selectAll(".countryLabel")
                     .transition()
@@ -340,16 +418,7 @@
                       //console.log(transformContent);
                       return transformContent;                                    
                     });
-                  }
-                // set zoom
-                svg
-                  .transition()
-                  .duration(500)
-                  .call(
-                    zoom.transform,
-                    d3.zoomIdentity.translate(dleft, dtop).scale(zoomScale)
-                  )
-                  .selectAll();
+                  }*/
               }
 
               var svgLegend = d3.select("#legend-holder")
@@ -386,17 +455,20 @@
 
               //Draw the rectangle and fill with gradient
               svgLegend.append("rect")
+                .attr("id","legend-bar")
                 .attr("width", legendHeight)
                 .attr("height", legendWidth)
                 .attr("transform","translate("+(50)+","+(legendHeight+legendTopMargin)+") rotate(-90)")
                 .style("fill", "url(#linear-gradient)");
 
-              svgLegend.append("text")              
+              svgLegend.append("text")  
+                .attr("id","legend-min-text")            
                 .attr("transform","translate("+(50+legendWidth+4)+","+(legendHeight+legendTopMargin-2)+")")
                 .attr("font-weight", "bold")
                 .text(minVal+'%');          
 
-              svgLegend.append("text")              
+              svgLegend.append("text")         
+                .attr("id","legend-max-text")       
                 .attr("transform","translate("+(50+legendWidth+4)+","+(legendTopMargin+15)+")")
                 .attr("font-weight", "bold")
                 .text(maxVal+'%');          

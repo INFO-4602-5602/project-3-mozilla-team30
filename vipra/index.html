@@ -1,0 +1,90 @@
+<!--sudo /opt/lampp/lampp start -->
+
+<html>
+<head>
+<title>Project 3</title>
+<style>body{background-color: powderblue}</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!--Put your D3 import statement between these two lines-->
+<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+<!--Put your D3 import statement between these two lines-->
+
+
+</head>
+
+<body>
+    <div id="plotGraphDiv">
+        <h1 align = 'center'> Top 10 countries based on Technical Comfortness criteria </h1>
+        <br/>
+        <br/>
+        <h3>Please select the tech saviness:</h3>
+        <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Ultra_Nerd" checked> <b>Ultra Nerd</b></label>
+        <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Technically_Savvy"> <b>Technically Savvy</b></label>
+        <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Average_User"> <b>Average User</b></label>
+        <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Not_Really"> <b>Can't Say</b></label>
+        <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Luddite"> <b>Luddite</b></label>
+       
+        <div id="scatterplot">
+            <p id="scatterLabel"></p>
+        </div>
+    </div>
+    <br/><br/><br/><br/><br/><br/><br/>
+    
+<script type="text/javascript">
+
+    d3.selectAll("#knowledgeOptions").on("click", function () { 
+        optionSelected = this.value;
+        console.log(optionSelected)
+        plotGraph(optionSelected);
+    });
+
+    // set the dimensions and margins of the graph
+    var margin = {top: 20, right: 200, bottom: 1550, left: 150};
+    var width = 960 - margin.left - margin.right;
+    var height = 800 - margin.top - margin.bottom;
+
+    function plotGraph(optionSelected) {
+        console.log("hello");
+        d3.selectAll("svg").remove();
+        var vals = ['Country', 'I_consider_myself', 'count', 'total_responses', 'response_percent']; // List of data attributes
+
+        // set the ranges
+        var x1 = d3.scaleLinear().range([0, width]);
+        var y1 = d3.scaleLinear().range([height, 0]);
+
+        var svg = d3.select("#plotGraphDiv").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        // Get the data
+        d3.csv("cleanedData.csv", function(error, bulkData) {
+            if  (error) throw error;
+
+            dataAll = []
+
+            //Considering only those countries which have more than 100 total responses.
+            bulkData.forEach(function(d){
+                if ((d[vals[1]] == optionSelected) && (d[vals[3]] > 100) && (d[vals[0]] != "Anonymous_Proxy")) {
+                    dataAll.push(d);
+                }
+            });
+            
+            data = [];
+
+            dataAll.sort(function(a, b){
+                return b[vals[4]] - a[vals[4]]; 
+            });
+
+            for (var i = 0; i < 10; i++) {
+                data.push(dataAll[i]);
+            }
+            console.log(data);
+        });
+    }
+    </script>
+</body>
+
+
+</html>

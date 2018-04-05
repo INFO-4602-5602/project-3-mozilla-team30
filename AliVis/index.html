@@ -11,68 +11,15 @@
 </head>
 
 <body>
-	<div id="partOne">
-        <h1>Part One: </h1>
-	</div>
 
-    <div id="partTwo">
-        <h1>Part Two: </h1>
-
-        <div id="barchart">
-
-            <p id="barchartLabel">   </p>
-
-        </div>
-	</div>
-
-    <div id="partThree">
-        <h1>Part Three &amp; Four: </h1>
-        <div id="scatterplot">
-            <p id="scatterLabel"></p>
-        </div>
-	</div>
-
-    <div id="partFive">
-        <h1>Part Five: </h1>
-        <div id="scatterplotSet">
-        </div>
-	</div>
     <div id="part six whistle">
       <h1> Bar chart  </h1>
       <div id="BarChartReal"> </div>
     </div>
 
     <script type="text/javascript">
-        // Put your part one code here ***********************
-        //Loading each data file and using console function to see the data values in the browser console
-       d3.csv("data/Mozilla Exported Dat_ Alia.csv",function(error,data){
-              if(error) throw error;
-              checkDataset(data);
-              console.log(data);
-        });
-
-        d3.csv("data/Mozilla Exported Dat_ Alia.csv",function(error,data){
-              if(error) throw error
-              checkDataset(data);
-              console.log(data);
-
-                    });
-
-        // Leave this to test your data uploading. All data uploading should be above this line
-        function checkDataset(dataset) {
-            if (dataset.length == 217)
-                $("#partOne").append("<p>data loaded correctly</p>");
-            else
-                $("#partOne").append("<p>data loaded incorrectly. Try using the debugger to help you find the bug!</p>");
-        }
 
 
-
-
-
-
-
-  //Part six (whistle adding a bar chart)
 
 
 d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
@@ -85,12 +32,17 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
           d.y = parseFloat(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]);
         //  d.z= parseFloat(d["Population"]);
         });
+        function GetTopFiveFit(arrayData){  //sorting to top 5 function
+
+          return arrayData.slice(0, 5);
+        }
+         data = GetTopFiveFit(data);
 
       //defining the margins for the line graph
        var margin={top:20, bottom:30, left:50, right:20};
        //setting up the dimensions for the width and height of the visualization
        var width= 600 - margin.left - margin.right;
-       var height= 400- margin.top- margin.bottom;
+       var height= 500- margin.top- margin.bottom;
 
        //mappign domain to the range using the scaleLinear function
        //using scaleBand and rangeRound function, this function is specifically used for the bar chart mapping
@@ -117,7 +69,7 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
                    svg.selectAll(".bar")
                    .data(data)
                    .enter().append("rect")
-                   .filter(function(d) { return d.y >991 })
+          //        .filter(function(d) { return d["Activity Tracker (ex: Fitbit or Apple Watch): Own"] >990 }) //By using this function i am only exploring the data which is in the top five category
                    .attr("class", "bar")
                    .attr("x", function(d) { return x(d.Country); })
                    .attr("y",function(d)  {return  y(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]); })
@@ -141,7 +93,78 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
               });
 
 
-//data from top 5 populous countries in usa and asia.
+//second graph starts here.
+
+d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
+
+        if(error) throw error;
+        //Cleaning data by converting it using the forEach and parseFloat function
+
+        data.forEach(function(d){
+      //    d.x = parseFloat(d.x);
+          d.y = parseFloat(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]);
+        //  d.z= parseFloat(d["Population"]);
+        });
+        function GetLastFiveFit(arrayData){  //sorting to top 5 function
+
+          return arrayData.slice(5, 9);
+        }
+         data = GetLastFiveFit(data);
+
+      //defining the margins for the line graph
+       var margin={top:20, bottom:30, left:50, right:20};
+       //setting up the dimensions for the width and height of the visualization
+       var width= 600 - margin.left - margin.right;
+       var height= 500- margin.top- margin.bottom;
+
+       //mappign domain to the range using the scaleLinear function
+       //using scaleBand and rangeRound function, this function is specifically used for the bar chart mapping
+       var x = d3.scaleBand().rangeRound([0, width]).padding(0.07),
+            y= d3.scaleLinear().rangeRound([height,0]);
+//       var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+
+
+    //usign map function to get the values in the x axis scale
+      x.domain(data.map(function(d) { return d.Country; }));
+      y.domain([0,d3.max(data,function(d){return d["Activity Tracker (ex: Fitbit or Apple Watch): Own"];})]);
+
+   //creating SVG object space in the part two div and accessing it using the div ID. Using transform/translate feature to tell which scales we want on svg
+        var svg = d3.select("#BarChartReal")
+                        .append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")" );
+
+
+    // using .bar to access the css file , to access the width of each band, bandwidth function is used
+    // using rect shape instead of using the cirlcs
+                   svg.selectAll(".bar")
+                   .data(data)
+                   .enter().append("rect")
+      //            .filter(function(d) { return d["Activity Tracker (ex: Fitbit or Apple Watch): Own"] <990 }) //By using this function i am only exploring the data which is in the top five category
+                   .attr("class", "bar")
+                   .attr("x", function(d) { return x(d.Country); })
+                   .attr("y",function(d)  {return  y(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]); })
+                    .attr("width", x.bandwidth())
+                    .attr("height", function(d) { return height - y(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]); });
+
+              //Creating the y and x axis for the line graph
+              // properties from the css are being used using the class name
+
+              svg.append("g")
+              .attr("class", "axis axis--x")
+              .attr("transform", "translate(0," + height + ")")
+              .call(d3.axisBottom(x));
+
+              //ticks are added into the scales, here I specified 10 ticks for the scale of 15.
+              svg.append("g")
+              .attr("class", "axis axis--y")
+              .call(d3.axisLeft(y).ticks(10))
+
+
+              });
+
     </script>
 </body>
 

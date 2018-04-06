@@ -6,7 +6,7 @@
 <html>
 <head>
 <title>Project 3</title>
-<style>body{background-color: powderblue}</style>
+<style>body{background-color: #ffe0b3 }</style>
 <link rel="stylesheet" type="text/css" href="techSavvy.css"></style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <!--Put your D3 import statement between these two lines-->
@@ -54,7 +54,7 @@
         var countryOption = d3.select('input[name="countryOptions"]:checked').node().value;
         var responsesOption = d3.select('input[name="responsesOptions"]:checked').node().value;
 
-        console.log(knowledgeOptionSelected + ": " + countryOption)
+        console.log(knowledgeOptionSelected + ":" + countryOption + ":" + responsesOption);
         plotGraph(knowledgeOptionSelected, countryOption, responsesOption);
     });
 
@@ -63,7 +63,7 @@
         var countryOption = this.value;
         var knowledgeOptionSelected = d3.select('input[name="knowledgeOptions"]:checked').node().value;
         var responsesOption = d3.select('input[name="responsesOptions"]:checked').node().value;
-        console.log(knowledgeOptionSelected + ": " + countryOption)
+        console.log(knowledgeOptionSelected + ":" + countryOption + ":" + responsesOption);
         plotGraph(knowledgeOptionSelected, countryOption, responsesOption);
     });
 
@@ -71,7 +71,7 @@
         var responsesOption = this.value;
         var knowledgeOptionSelected = d3.select('input[name="knowledgeOptions"]:checked').node().value;
         var countryOption = d3.select('input[name="countryOptions"]:checked').node().value;
-        console.log(knowledgeOptionSelected + ": " + countryOption)
+        console.log(knowledgeOptionSelected + ":" + countryOption + ":" + responsesOption);
         plotGraph(knowledgeOptionSelected, countryOption, responsesOption);
     });
 
@@ -80,13 +80,15 @@
     width = 1250 - margin.left - margin.right,
   	height = 550 - margin.top - margin.bottom;
 
+  	var fillColor = " #3333cc";
+  	var mouseOverColor = "#FF9800DB";
+
   	var knowledgeOptionSelected = d3.select('input[name="knowledgeOptions"]:checked').node().value;
   	var countryOption = d3.select('input[name="countryOptions"]:checked').node().value;
   	var responsesOption = d3.select('input[name="responsesOptions"]:checked').node().value;
   	plotGraph(knowledgeOptionSelected, countryOption, responsesOption);
 
     function plotGraph(optionSelected, countryOption, responsesOption) {
-        console.log("hello");
         d3.selectAll("svg").remove();
         var vals = ['Country', 'I_consider_myself', 'count', 'total_responses', 'response_percent']; // List of data attributes
 
@@ -129,11 +131,11 @@
 
             var mouseover = function(d) {
 				          var p = d3.select(this)
-				            .style("fill", "#290F9C");}
+				            .style("fill", mouseOverColor);}
 
 			var mouseout = function(d) {
 				          var p = d3.select(this)
-				            .style("fill", "#FF9800DB");}
+				            .style("fill", fillColor);}
 
 
 			x1.domain(data.map(function(d) { return d[vals[0]]; }));
@@ -155,7 +157,7 @@
 	          	.attr("y", function(d) {return y1(d[vals[4]])})
 	          	.attr("height",function(d) {return height - y1(d[vals[4]]);})
 	          	
-	          	.attr("fill", "#FF9800DB")
+	          	.attr("fill", fillColor)
 	          	.on("mouseover", mouseover)
         		.on("mouseout", mouseout)
         		.append("svg:title")
@@ -187,6 +189,7 @@
 	            .attr("text-anchor", "middle")  
 	            .attr("style","font-size: 20px;font-style: italic;")
 	            .attr("font-weight", "bold")
+	            .attr("fill", "#cc0066")
 	            .attr("transform", "translate("+ (0-(margin.left/2)) +","+(height/2)+") rotate (-90)")  // text is drawn off the screen top left, move down and out and rotate
 	            .text("Percent of responses");
 
@@ -195,7 +198,8 @@
 	            .attr("text-anchor", "middle")  
 	            .attr("style","font-size: 20px;font-style: italic;")
 	            .attr("font-weight", "bold")
-	            .attr("transform", "translate("+ (width/2) +","+(height+(margin.bottom - margin.top))+")")  // centre below axis
+	            .attr("fill", "#cc0066")
+	            .attr("transform", "translate("+ (width/2) +","+(height+(margin.bottom - margin.top) + 15)+")")  // centre below axis
 	            .text("Country");
 
         });

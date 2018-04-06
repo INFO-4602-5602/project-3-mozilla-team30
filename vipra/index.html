@@ -3,7 +3,7 @@
 <html>
 <head>
 <title>Project 3</title>
-<style>body{background-color: powderblue}</style>
+<link rel="stylesheet" type="text/css" href="techSavvy.css"></style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <!--Put your D3 import statement between these two lines-->
 <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
@@ -23,6 +23,12 @@
         <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Average_User"> <b>Average User</b></label>
         <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Not_Really"> <b>Can't Say</b></label>
         <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Luddite"> <b>Luddite</b></label>
+		
+		<h3>Please select number of countries to display:</h3>
+        <label><input type="radio" name="countryOptions" id="countryOptions" value="3" checked> <b>3</b></label>
+        <label><input type="radio" name="countryOptions" id="countryOptions" value="5"> <b>5</b></label>
+        <label><input type="radio" name="countryOptions" id="countryOptions" value="10"> <b>10</b></label>
+        <label><input type="radio" name="countryOptions" id="countryOptions" value="15"> <b>15</b></label>
        
         <div id="scatterplot">
             <p id="scatterLabel"></p>
@@ -33,9 +39,19 @@
 <script type="text/javascript">
 
     d3.selectAll("#knowledgeOptions").on("click", function () { 
-        optionSelected = this.value;
-        console.log(optionSelected)
-        plotGraph(optionSelected);
+
+        var knowledgeOptionSelected = this.value;
+        var countryOption = d3.select('input[name="countryOptions"]:checked').node().value;
+        console.log(knowledgeOptionSelected + ": " + countryOption)
+        plotGraph(knowledgeOptionSelected, countryOption);
+    });
+
+    d3.selectAll("#countryOptions").on("click", function () { 
+
+        var countryOption = this.value;
+        var knowledgeOptionSelected = d3.select('input[name="knowledgeOptions"]:checked').node().value;;
+        console.log(knowledgeOptionSelected + ": " + countryOption)
+        plotGraph(knowledgeOptionSelected, countryOption);
     });
 
     // set the dimensions and margins of the graph
@@ -43,7 +59,7 @@
     var width = 960 - margin.left - margin.right;
     var height = 800 - margin.top - margin.bottom;
 
-    function plotGraph(optionSelected) {
+    function plotGraph(optionSelected, countryOption) {
         console.log("hello");
         d3.selectAll("svg").remove();
         var vals = ['Country', 'I_consider_myself', 'count', 'total_responses', 'response_percent']; // List of data attributes
@@ -53,8 +69,8 @@
         var y1 = d3.scaleLinear().range([height, 0]);
 
         var svg = d3.select("#plotGraphDiv").append("svg")
-                        .attr("width", width + margin.left + margin.right)
-                        .attr("height", height + margin.top + margin.bottom)
+                        .attr("width", "100%")//width + margin.left + margin.right)
+                        .attr("height", "100%")//height + margin.top + margin.bottom)
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -71,16 +87,48 @@
                 }
             });
             
-            data = [];
+            data = [];	// This contains the final data which will be displayed.
 
             dataAll.sort(function(a, b){
                 return b[vals[4]] - a[vals[4]]; 
             });
 
-            for (var i = 0; i < 10; i++) {
+            for (var i = 0; i < countryOption; i++) {
                 data.push(dataAll[i]);
             }
             console.log(data);
+
+            var mouseover = function(d) {
+				          var p = d3.select(this)
+				            .style("fill", "#FF9800DB");}
+
+			var mouseout = function(d) {
+				          var p = d3.select(this)
+				            .style("fill", "#290F9C");}
+
+            //Making the bar chart
+            svg.selectAll("rect")
+            	.attr("class", "barvizz")	//So this d3 class will be called "bar" and can be directly referenced in css with this name.
+            	.data(data)
+            	.enter()
+            	.append("rect")
+            	.attr("height",function(d, i) {return d[vals[4]] * 10})
+	          	.attr("width","40")
+	          	.attr("x",function(d, i) {return (i * 60) + 25})
+	          	.attr("y", function(d, i) {return 500 - (d[vals[4]]*10)})
+	          	.attr("fill", "#290F9C")
+	          	.on("mouseover", mouseover)
+        		.on("mouseout", mouseout) ;
+
+        	svg.selectAll("text")
+			    .data(data)
+			    .enter().append("text")
+			    .text(function(d) {return Math.trunc(d[vals[4]])})
+	            .attr("class", "text")
+	          	.attr("x", function(d, i) {return (i * 60) + 36})
+	            .attr("y", function(d, i) {return 540 - (d[vals[4]] * 10)})
+	            .attr("fill", "white");
+
         });
     }
     </script>

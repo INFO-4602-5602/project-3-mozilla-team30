@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Project 0</title>
+<title>Project 3</title>
 
 <link rel="stylesheet" href="project1.css" type="text/css"/>
 
@@ -13,7 +13,7 @@
 <body>
 
     <div id="part six whistle">
-      <h1> Bar chart  </h1>
+      <h3> <h1>Bar charts:</h1> Top five countries using the fitness trackers and top five below average countries.  </h3>
       <p id="barchartLabel">   </p>
       <br>  <br>  <br>  <br>
     <div id="BarChartReal"> </div>
@@ -41,7 +41,7 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
          data = GetTopFiveFit(data);
 
       //defining the margins for the line graph
-       var margin={top:20, bottom:30, left:50, right:20};
+       var margin={top:20, bottom:40, left:60, right:20};
        //setting up the dimensions for the width and height of the visualization
        var width= 600 - margin.left - margin.right;
        var height= 500- margin.top- margin.bottom;
@@ -52,11 +52,14 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
             y= d3.scaleLinear().rangeRound([height,0]);
 //       var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
 
-
+       var mx= d3.max(data,function(d){
+        console.log(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]);
+         return parseInt(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]);});
+         console.log(mx);
     //usign map function to get the values in the x axis scale
       x.domain(data.map(function(d) { return d.Country; }));
-      y.domain([0,d3.max(data,function(d){return d["Activity Tracker (ex: Fitbit or Apple Watch): Own"];})]);
-
+      y.domain([0,mx]);
+        console.log(y.domain());
    //creating SVG object space in the part two div and accessing it using the div ID. Using transform/translate feature to tell which scales we want on svg
         var svg = d3.select("#BarChartReal")
                         .append("svg")
@@ -73,6 +76,7 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
                    .enter().append("rect")
           //        .filter(function(d) { return d["Activity Tracker (ex: Fitbit or Apple Watch): Own"] >990 }) //By using this function i am only exploring the data which is in the top five category
                    .attr("class", "bar")
+                   .attr("id","bar1")
                    .attr("x", function(d) { return x(d.Country); })
                    .attr("y",function(d)  {return  y(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]); })
                     .attr("width", x.bandwidth())
@@ -83,7 +87,17 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
                     .on("mouseover",function(d,i) {
                         d3.select(this).attr("style","fill:DarkRed ;stroke-width:3;stroke:DarkRed");   // Change color of the mouse fill when mouse is hovered over it
 
+                        tooltip.style("display", null)
+
+                        d3.select("#bar2-"+(Math.round(d.y)).toString())
+                        .transition()
+                        .duration(100)
+                        .attr("r", 15)
+                        .style("fill", "red")
+
                         tooltip.style("display", null);
+
+
                     })
 
                     .on("mouseout", function(d,i){
@@ -92,6 +106,11 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
                         d3.select(this).style("fill",ori_color);
 
                         tooltip.style("display", "none");
+
+
+
+
+
                     })
 
 
@@ -106,12 +125,15 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
                       tooltip.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2))).text(text1);
                       tooltip.select("#text2").text(text2);
                       tooltip.select("rect").attr("width",(text2.length*14));
+
+
+
                     });
 
 
 
                     var tooltip = svg.append("g")
-                      .attr("class", "tooltip")
+                      .attr("class", "tooltip1")
                       .style("display", "none");
 
                     tooltip.append("rect")
@@ -139,6 +161,25 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
 
 
 
+
+                      svg.append("text")
+                     .attr("text-anchor", "middle")
+                     .attr("font-weight", "bold")
+                     .attr("style","font-size: 14px;font-style: italic;")
+                     .attr("fill", "#000000")
+                     .attr("transform", "translate("+ (0-(margin.left/1.5)) +","+(height/2)+") rotate (-90)")  // text is drawn off the screen top left, move down and out and rotate
+                     .text("No of users");
+
+
+                     svg.append("text")
+                	            .attr("text-anchor", "middle")
+                	            .attr("font-weight", "bold")
+                              .attr("style","font-size: 14px;font-style: italic;")
+                	            .attr("fill", "#00000")
+                	            .attr("transform", "translate("+ (width/2) +","+(height+(margin.bottom - margin.top) + 20)+")")  // centre below axis
+                	            .text("Countries");
+
+
               //Creating the y and x axis for the line graph
               // properties from the css are being used using the class name
 
@@ -150,9 +191,16 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
               //ticks are added into the scales, here I specified 10 ticks for the scale of 15.
               svg.append("g")
               .attr("class", "axis axis--y")
-              .call(d3.axisLeft(y).ticks(10))
+              .call(d3.axisLeft(y))
 
 
+              svg.append("text")
+                 .attr("x",(width /2))
+                 .attr("y",6 - (margin-top /2))
+                 .attr("text-anchor","right")
+                 .style("font-size","14.5px")
+                 .attr("font-weight", "bold")
+                 .text("Fitbit users top five countries ");
               });
 
 
@@ -170,14 +218,14 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
         });
         function GetLastFiveFit(arrayData){  //sorting to top 5 function
 
-          return arrayData.slice(5, 9);
+          return arrayData.slice(5, 10);
         }
          data = GetLastFiveFit(data);
 
       //defining the margins for the line graph
-       var margin={top:20, bottom:30, left:50, right:20};
+       var margin={top:20, bottom:40, left:50, right:20};
        //setting up the dimensions for the width and height of the visualization
-       var width= 600 - margin.left - margin.right;
+       var width= 700 - margin.left - margin.right;
        var height= 500- margin.top- margin.bottom;
 
        //mappign domain to the range using the scaleLinear function
@@ -199,7 +247,7 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")" );
 
-
+        var padding= 100;
     // using .bar to access the css file , to access the width of each band, bandwidth function is used
     // using rect shape instead of using the cirlcs
                    svg.selectAll(".bar")
@@ -207,6 +255,7 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
                    .enter().append("rect")
       //            .filter(function(d) { return d["Activity Tracker (ex: Fitbit or Apple Watch): Own"] <990 }) //By using this function i am only exploring the data which is in the top five category
                    .attr("class", "bar")
+                   .attr("id","bar2")
                    .attr("x", function(d) { return x(d.Country); })
                    .attr("y",function(d)  {return  y(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]); })
                     .attr("width", x.bandwidth())
@@ -225,6 +274,9 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
                                             d3.select(this).style("fill",ori_color);
 
                                             tooltip.style("display", "none");
+
+
+
                                         })
 
 
@@ -239,16 +291,19 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
                                           tooltip.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2))).text(text1);
                                           tooltip.select("#text2").text(text2);
                                           tooltip.select("rect").attr("width",(text2.length*14));
+
+
+
                                         });
 
 
 
                                         var tooltip = svg.append("g")
-                                          .attr("class", "tooltip")
+                                          .attr("class", "tooltip2")
                                           .style("display", "none");
 
                                         tooltip.append("rect")
-                                          .attr("width", 90)
+                                          .attr("width", 100)
                                           .attr("height", 40)
                                           .attr("fill", "black")
                                           .style("opacity", 1.0)
@@ -284,6 +339,31 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
               .call(d3.axisLeft(y).ticks(10))
 
 
+              svg.append("text")
+             .attr("text-anchor", "middle")
+             .attr("font-weight", "bold")
+             .attr("style","font-size: 14px;font-style: italic;")
+             .attr("fill", "#000000")
+             .attr("transform", "translate("+ (0-(margin.left/2)) +","+(height/2)+") rotate (-90)")  // text is drawn off the screen top left, move down and out and rotate
+             .text("No of users");
+
+
+             svg.append("text")
+        	            .attr("text-anchor", "middle")
+        	            .attr("font-weight", "bold")
+                      .attr("style","font-size: 14px;font-style: italic;")
+        	            .attr("fill", "#00000")
+        	            .attr("transform", "translate("+ (width/2) +","+(height+(margin.bottom - margin.top) + 20)+")")  // centre below axis
+        	            .text("Countries");
+
+
+              svg.append("text")
+                 .attr("x",(width /2))
+                 .attr("y",6 - (margin-top /2))
+                 .attr("text-anchor","right")
+                 .style("font-size","14.5px")
+                 .attr("font-weight", "bold")
+                 .text("Fitbit users top five countries below average");
               });
 
     </script>

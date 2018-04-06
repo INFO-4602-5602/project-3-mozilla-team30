@@ -14,7 +14,9 @@
 
     <div id="part six whistle">
       <h1> Bar chart  </h1>
-      <div id="BarChartReal"> </div>
+      <p id="barchartLabel">   </p>
+      <br>  <br>  <br>  <br>
+    <div id="BarChartReal"> </div>
     </div>
 
     <script type="text/javascript">
@@ -74,7 +76,68 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
                    .attr("x", function(d) { return x(d.Country); })
                    .attr("y",function(d)  {return  y(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]); })
                     .attr("width", x.bandwidth())
-                    .attr("height", function(d) { return height - y(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]); });
+                    .attr("height", function(d) { return height - y(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]); })
+
+
+
+                    .on("mouseover",function(d,i) {
+                        d3.select(this).attr("style","fill:DarkRed ;stroke-width:3;stroke:DarkRed");   // Change color of the mouse fill when mouse is hovered over it
+
+                        tooltip.style("display", null);
+                    })
+
+                    .on("mouseout", function(d,i){
+                        d3.select(this).attr("style", null);
+                        var ori_color = d3.select(this).attr("colorHidden")
+                        d3.select(this).style("fill",ori_color);
+
+                        tooltip.style("display", "none");
+                    })
+
+
+
+                    .on("mousemove", function(d,i) {
+                      var xPosition = d3.mouse(this)[0] - 35;
+                      var yPosition = d3.mouse(this)[1] - 55;
+                      tooltip.attr("transform", "translate(" + (x(d.Country) + xPosition) + "," + yPosition + ")");
+                      var text1 = d.Country
+                      var text2 = d["Activity Tracker (ex: Fitbit or Apple Watch): Own"];
+                      tooltip.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*1.5))).text(text1);
+                      tooltip.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2))).text(text1);
+                      tooltip.select("#text2").text(text2);
+                      tooltip.select("rect").attr("width",(text2.length*14));
+                    });
+
+
+
+                    var tooltip = svg.append("g")
+                      .attr("class", "tooltip")
+                      .style("display", "none");
+
+                    tooltip.append("rect")
+                      .attr("width", 90)
+                      .attr("height", 40)
+                      .attr("fill", "black")
+                      .style("opacity", 1.0)
+                      .attr("rx", 2)
+                      .attr("ry", 7);
+
+                    tooltip.append("text")
+                      .attr("dy", "1.2em")
+                      .attr("id", "text1")
+                      .attr('style','fill:White')
+                      .attr("font-size", "10px")
+                      .attr("font-weight", "bold");
+
+                    tooltip.append("text")
+                      .attr("dy", "2.5em")
+                      .attr("id", "text2")
+                      .attr('style','fill:White')
+                      .attr("font-size", "10px")
+                      .attr("font-weight", "bold");
+
+
+
 
               //Creating the y and x axis for the line graph
               // properties from the css are being used using the class name
@@ -147,7 +210,65 @@ d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
                    .attr("x", function(d) { return x(d.Country); })
                    .attr("y",function(d)  {return  y(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]); })
                     .attr("width", x.bandwidth())
-                    .attr("height", function(d) { return height - y(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]); });
+                    .attr("height", function(d) { return height - y(d["Activity Tracker (ex: Fitbit or Apple Watch): Own"]); })
+
+
+                                        .on("mouseover",function(d,i) {
+                                            d3.select(this).attr("style","fill:DarkRed ;stroke-width:3;stroke:DarkRed");   // Change color of the mouse fill when mouse is hovered over it
+
+                                            tooltip.style("display", null);
+                                        })
+
+                                        .on("mouseout", function(d,i){
+                                            d3.select(this).attr("style", null);
+                                            var ori_color = d3.select(this).attr("colorHidden")
+                                            d3.select(this).style("fill",ori_color);
+
+                                            tooltip.style("display", "none");
+                                        })
+
+
+
+                                        .on("mousemove", function(d,i) {
+                                          var xPosition = d3.mouse(this)[0] - 35;
+                                          var yPosition = d3.mouse(this)[1] - 55;
+                                          tooltip.attr("transform", "translate(" + (x(d.Country) + xPosition) + "," + yPosition + ")");
+                                          var text1 = d.Country
+                                          var text2 = d["Activity Tracker (ex: Fitbit or Apple Watch): Own"];
+                                          tooltip.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*1.5))).text(text1);
+                                          tooltip.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2))).text(text1);
+                                          tooltip.select("#text2").text(text2);
+                                          tooltip.select("rect").attr("width",(text2.length*14));
+                                        });
+
+
+
+                                        var tooltip = svg.append("g")
+                                          .attr("class", "tooltip")
+                                          .style("display", "none");
+
+                                        tooltip.append("rect")
+                                          .attr("width", 90)
+                                          .attr("height", 40)
+                                          .attr("fill", "black")
+                                          .style("opacity", 1.0)
+                                          .attr("rx", 2)
+                                          .attr("ry", 7);
+
+                                        tooltip.append("text")
+                                          .attr("dy", "1.2em")
+                                          .attr("id", "text1")
+                                          .attr('style','fill:White')
+                                          .attr("font-size", "10px")
+                                          .attr("font-weight", "bold");
+
+                                        tooltip.append("text")
+                                          .attr("dy", "2.5em")
+                                          .attr("id", "text2")
+                                          .attr('style','fill:White')
+                                          .attr("font-size", "10px")
+                                          .attr("font-weight", "bold");
+
 
               //Creating the y and x axis for the line graph
               // properties from the css are being used using the class name

@@ -1,8 +1,12 @@
 <!--sudo /opt/lampp/lampp start -->
+<!-- Reference: https://www.digitalocean.com/community/tutorials/getting-started-with-data-visualization-using-javascript-and-the-d3-library
+ Reference: https://bl.ocks.org/alanvillalobos/14e9f0d80ea6b0d8083ba95a9d571d13
+ -->
 
 <html>
 <head>
 <title>Project 3</title>
+<style>body{background-color: powderblue}</style>
 <link rel="stylesheet" type="text/css" href="techSavvy.css"></style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <!--Put your D3 import statement between these two lines-->
@@ -16,20 +20,20 @@
     <div id="plotGraphDiv">
         <h1 align = 'center'> Top 10 countries based on Technical Comfortness criteria </h1>
         <br/>
-        <br/>
-        <h3>Please select the tech saviness:</h3>
-        <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Ultra_Nerd" checked> <b>Ultra Nerd</b></label>
-        <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Technically_Savvy"> <b>Technically Savvy</b></label>
-        <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Average_User"> <b>Average User</b></label>
-        <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Not_Really"> <b>Can't Say</b></label>
-        <label><input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Luddite"> <b>Luddite</b></label>
+
+        <h3>* Please select the tech saviness:</h3>
+        <label>&nbsp&nbsp&nbsp&nbsp<input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Ultra_Nerd" checked> <b>Ultra Nerd</b></label>
+        <label>&nbsp&nbsp&nbsp&nbsp<input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Technically_Savvy"> <b>Technically Savvy</b></label>
+        <label>&nbsp&nbsp<input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Average_User"> <b>Average User</b></label>
+        <label>&nbsp&nbsp<input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Not_Really"> <b>Can't Say</b></label>
+        <label>&nbsp&nbsp<input type="radio" name="knowledgeOptions" id="knowledgeOptions" value="Luddite"> <b>Luddite</b></label>
 		
-		<h3>Please select number of countries to display:</h3>
-        <label><input type="radio" name="countryOptions" id="countryOptions" value="3" checked> <b>3</b></label>
-        <label><input type="radio" name="countryOptions" id="countryOptions" value="5"> <b>5</b></label>
-        <label><input type="radio" name="countryOptions" id="countryOptions" value="10"> <b>10</b></label>
-        <label><input type="radio" name="countryOptions" id="countryOptions" value="15"> <b>15</b></label>
-       
+		<h3>* Please select number of countries to display:</h3>
+        <label>&nbsp&nbsp&nbsp&nbsp<input type="radio" name="countryOptions" id="countryOptions" value="15" checked> <b>15</b></label>
+       <label>&nbsp&nbsp<input type="radio" name="countryOptions" id="countryOptions" value="10"> <b>10</b></label>
+       <label>&nbsp&nbsp<input type="radio" name="countryOptions" id="countryOptions" value="5"> <b>5</b></label>
+       <label>&nbsp&nbsp<input type="radio" name="countryOptions" id="countryOptions" value="3" > <b>3</b></label>
+       <hr/ style="color: grey">
         <div id="scatterplot">
             <p id="scatterLabel"></p>
         </div>
@@ -49,15 +53,19 @@
     d3.selectAll("#countryOptions").on("click", function () { 
 
         var countryOption = this.value;
-        var knowledgeOptionSelected = d3.select('input[name="knowledgeOptions"]:checked').node().value;;
+        var knowledgeOptionSelected = d3.select('input[name="knowledgeOptions"]:checked').node().value;
         console.log(knowledgeOptionSelected + ": " + countryOption)
         plotGraph(knowledgeOptionSelected, countryOption);
     });
 
     // set the dimensions and margins of the graph
-    var margin = {top: 20, right: 200, bottom: 1550, left: 150};
-    var width = 960 - margin.left - margin.right;
-    var height = 800 - margin.top - margin.bottom;
+    var margin = {top: 50, right: 50, bottom:150, left: 100},
+    width = 1250 - margin.left - margin.right,
+  	height = 550 - margin.top - margin.bottom;
+
+  	var knowledgeOptionSelected = d3.select('input[name="knowledgeOptions"]:checked').node().value;
+  	var countryOption = d3.select('input[name="countryOptions"]:checked').node().value;
+  	plotGraph(knowledgeOptionSelected, countryOption);
 
     function plotGraph(optionSelected, countryOption) {
         console.log("hello");
@@ -65,12 +73,12 @@
         var vals = ['Country', 'I_consider_myself', 'count', 'total_responses', 'response_percent']; // List of data attributes
 
         // set the ranges
-        var x1 = d3.scaleLinear().range([0, width]);
+        var x1 = d3.scaleBand().range([0, width]).padding(0.1);
         var y1 = d3.scaleLinear().range([height, 0]);
 
         var svg = d3.select("#plotGraphDiv").append("svg")
-                        .attr("width", "100%")//width + margin.left + margin.right)
-                        .attr("height", "100%")//height + margin.top + margin.bottom)
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -78,11 +86,13 @@
         d3.csv("cleanedData.csv", function(error, bulkData) {
             if  (error) throw error;
 
+            //---------------Starting data processing-----------------------
             dataAll = []
 
             //Considering only those countries which have more than 100 total responses.
             bulkData.forEach(function(d){
                 if ((d[vals[1]] == optionSelected) && (d[vals[3]] > 100) && (d[vals[0]] != "Anonymous_Proxy")) {
+                	d[vals[0]] = d[vals[0]].split('_').join(' ')
                     dataAll.push(d);
                 }
             });
@@ -97,14 +107,22 @@
                 data.push(dataAll[i]);
             }
             console.log(data);
+            //------------------Data Processing complete---------------------------
 
             var mouseover = function(d) {
 				          var p = d3.select(this)
-				            .style("fill", "#FF9800DB");}
+				            .style("fill", "#290F9C");}
 
 			var mouseout = function(d) {
 				          var p = d3.select(this)
-				            .style("fill", "#290F9C");}
+				            .style("fill", "#FF9800DB");}
+
+
+			x1.domain(data.map(function(d) { return d[vals[0]]; }));
+  			y1.domain([0, d3.max(data, function(d) { return d[vals[4]]; })]);
+            
+  			barWidth = x1.bandwidth();
+
 
             //Making the bar chart
             svg.selectAll("rect")
@@ -112,22 +130,53 @@
             	.data(data)
             	.enter()
             	.append("rect")
-            	.attr("height",function(d, i) {return d[vals[4]] * 10})
-	          	.attr("width","40")
-	          	.attr("x",function(d, i) {return (i * 60) + 25})
-	          	.attr("y", function(d, i) {return 500 - (d[vals[4]]*10)})
-	          	.attr("fill", "#290F9C")
+            	
+	          	.attr("x",function(d) {return x1(d[vals[0]])})
+	          	.attr("width", barWidth)
+
+	          	.attr("y", function(d) {return y1(d[vals[4]])})
+	          	.attr("height",function(d) {return height - y1(d[vals[4]]);})
+	          	
+	          	.attr("fill", "#FF9800DB")
 	          	.on("mouseover", mouseover)
         		.on("mouseout", mouseout) ;
 
-        	svg.selectAll("text")
-			    .data(data)
-			    .enter().append("text")
-			    .text(function(d) {return Math.trunc(d[vals[4]])})
-	            .attr("class", "text")
-	          	.attr("x", function(d, i) {return (i * 60) + 36})
-	            .attr("y", function(d, i) {return 540 - (d[vals[4]] * 10)})
-	            .attr("fill", "white");
+        	// add the x Axis
+			bar = svg.append("g")
+			    .attr("transform", "translate(0," + height + ")")
+			    .call(d3.axisBottom(x1))
+			    .selectAll("text")  
+	            .style("text-anchor", "end")
+	            .attr("font-size", "14px")
+	            .attr("font-weight", "bold")            
+	            .attr("transform", "rotate(-30)");;
+
+
+			// add the y Axis
+			svg.append("g")
+			    .call(d3.axisLeft(y1))
+			    .selectAll("text")  
+	            .style("text-anchor", "end")
+	            .attr("font-size", "14px")
+	            .attr("font-weight", "bold");
+
+	        var div = d3.select("#plotGraphDiv")
+
+			//Add Y-axis Label
+			svg.append("text")
+	            .attr("text-anchor", "middle")  
+	            .attr("style","font-size: 20px;font-style: italic;")
+	            .attr("font-weight", "bold")
+	            .attr("transform", "translate("+ (0-(margin.left/2)) +","+(height/2)+") rotate (-90)")  // text is drawn off the screen top left, move down and out and rotate
+	            .text("Percent of responses");
+
+	        // Add X-axis Label
+	        svg.append("text")
+	            .attr("text-anchor", "middle")  
+	            .attr("style","font-size: 20px;font-style: italic;")
+	            .attr("font-weight", "bold")
+	            .attr("transform", "translate("+ (width/2) +","+(height+(margin.bottom - margin.top))+")")  // centre below axis
+	            .text("Country");
 
         });
     }

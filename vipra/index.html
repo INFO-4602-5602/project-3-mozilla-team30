@@ -33,7 +33,13 @@
        <label>&nbsp&nbsp<input type="radio" name="countryOptions" id="countryOptions" value="10"> <b>10</b></label>
        <label>&nbsp&nbsp<input type="radio" name="countryOptions" id="countryOptions" value="5"> <b>5</b></label>
        <label>&nbsp&nbsp<input type="radio" name="countryOptions" id="countryOptions" value="3" > <b>3</b></label>
-       <hr/ style="color: grey">
+
+       <h3>* Consider countries from where total number of responses were more than:</h3>
+        <label>&nbsp&nbsp&nbsp&nbsp<input type="radio" name="responsesOptions" id="responsesOptions" value="100" checked> <b>100</b></label>
+       <label>&nbsp&nbsp<input type="radio" name="responsesOptions" id="responsesOptions" value="200"> <b>200</b></label>
+       <label>&nbsp&nbsp<input type="radio" name="responsesOptions" id="responsesOptions" value="500"> <b>500</b></label>
+       <label>&nbsp&nbsp<input type="radio" name="responsesOptions" id="responsesOptions" value="1000" > <b>1000</b></label>
+       <hr/>
         <div id="scatterplot">
             <p id="scatterLabel"></p>
         </div>
@@ -46,16 +52,27 @@
 
         var knowledgeOptionSelected = this.value;
         var countryOption = d3.select('input[name="countryOptions"]:checked').node().value;
+        var responsesOption = d3.select('input[name="responsesOptions"]:checked').node().value;
+
         console.log(knowledgeOptionSelected + ": " + countryOption)
-        plotGraph(knowledgeOptionSelected, countryOption);
+        plotGraph(knowledgeOptionSelected, countryOption, responsesOption);
     });
 
     d3.selectAll("#countryOptions").on("click", function () { 
 
         var countryOption = this.value;
         var knowledgeOptionSelected = d3.select('input[name="knowledgeOptions"]:checked').node().value;
+        var responsesOption = d3.select('input[name="responsesOptions"]:checked').node().value;
         console.log(knowledgeOptionSelected + ": " + countryOption)
-        plotGraph(knowledgeOptionSelected, countryOption);
+        plotGraph(knowledgeOptionSelected, countryOption, responsesOption);
+    });
+
+    d3.selectAll("#responsesOptions").on("click", function () { 
+        var responsesOption = this.value;
+        var knowledgeOptionSelected = d3.select('input[name="knowledgeOptions"]:checked').node().value;
+        var countryOption = d3.select('input[name="countryOptions"]:checked').node().value;
+        console.log(knowledgeOptionSelected + ": " + countryOption)
+        plotGraph(knowledgeOptionSelected, countryOption, responsesOption);
     });
 
     // set the dimensions and margins of the graph
@@ -65,9 +82,10 @@
 
   	var knowledgeOptionSelected = d3.select('input[name="knowledgeOptions"]:checked').node().value;
   	var countryOption = d3.select('input[name="countryOptions"]:checked').node().value;
-  	plotGraph(knowledgeOptionSelected, countryOption);
+  	var responsesOption = d3.select('input[name="responsesOptions"]:checked').node().value;
+  	plotGraph(knowledgeOptionSelected, countryOption, responsesOption);
 
-    function plotGraph(optionSelected, countryOption) {
+    function plotGraph(optionSelected, countryOption, responsesOption) {
         console.log("hello");
         d3.selectAll("svg").remove();
         var vals = ['Country', 'I_consider_myself', 'count', 'total_responses', 'response_percent']; // List of data attributes
@@ -91,7 +109,7 @@
 
             //Considering only those countries which have more than 100 total responses.
             bulkData.forEach(function(d){
-                if ((d[vals[1]] == optionSelected) && (d[vals[3]] > 100) && (d[vals[0]] != "Anonymous_Proxy")) {
+                if ((d[vals[1]] == optionSelected) && (d[vals[3]] > responsesOption) && (d[vals[0]] != "Anonymous_Proxy")) {
                 	d[vals[0]] = d[vals[0]].split('_').join(' ')
                     dataAll.push(d);
                 }

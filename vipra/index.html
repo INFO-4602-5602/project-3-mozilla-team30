@@ -139,7 +139,9 @@
 	          	
 	          	.attr("fill", "#FF9800DB")
 	          	.on("mouseover", mouseover)
-        		.on("mouseout", mouseout) ;
+        		.on("mouseout", mouseout)
+        		.append("svg:title")
+        		.text(function(d) {return d[vals[0]] + "\nPercent: " + Math.trunc(d[vals[4]]);});
 
         	// add the x Axis
 			bar = svg.append("g")

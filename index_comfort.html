@@ -90,6 +90,7 @@
   	plotGraph(knowledgeOptionSelected, countryOption, responsesOption);
 
     function plotGraph(optionSelected, countryOption, responsesOption) {
+        console.log(knowledgeOptionSelected + ":" + countryOption + ":" + responsesOption);
         d3.selectAll("svg").remove();
         var vals = ['Country', 'I_consider_myself', 'count', 'total_responses', 'response_percent']; // List of data attributes
 
@@ -112,7 +113,8 @@
 
             //Considering only those countries which have more than 100 total responses.
             bulkData.forEach(function(d){
-                if ((d[vals[1]] == optionSelected) && (d[vals[3]] > responsesOption) && (d[vals[0]] != "Anonymous_Proxy")) {
+                console.log((parseInt(d[vals[3]]) +":"+ responsesOption)+ ":" +(parseInt(d[vals[3]]) > responsesOption));
+                if ((d[vals[1]] == optionSelected) && (parseInt(d[vals[3]]) > responsesOption) && (d[vals[0]] != "Anonymous_Proxy")) {
                 	d[vals[0]] = d[vals[0]].split('_').join(' ')
                     dataAll.push(d);
                 }
@@ -162,7 +164,10 @@
 	          	.on("mouseover", mouseover)
         		.on("mouseout", mouseout)
         		.append("svg:title")
-        		.text(function(d) {return d[vals[0]] + "\nPercent: " + Math.trunc(d[vals[4]]);});
+        		.text(function(d) {return d[vals[0]] + 
+                    "\nPercent: " + Math.trunc(d[vals[4]]) + 
+                    "\n" + optionSelected + ": " + Math.trunc(d[vals[2]]) + 
+                    "\nTotal Responses: " + d[vals[3]];});
 
         	// add the x Axis
 			bar = svg.append("g")

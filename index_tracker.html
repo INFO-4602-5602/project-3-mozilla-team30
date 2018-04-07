@@ -20,12 +20,9 @@
     <div id="BarChartReal"> </div>
     </div>
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
-
-
-
-d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
+  d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
 
         if(error) throw error;
         //Cleaning data by converting it using the forEach and parseFloat function
@@ -187,12 +184,21 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
               svg.append("g")
               .attr("class", "axis axis--x")
               .attr("transform", "translate(0," + height + ")")
-              .call(d3.axisBottom(x));
+              .call(d3.axisBottom(x))
+              .selectAll("text")  
+              .style("text-anchor", "end")
+              .attr("font-size", "14px")
+              .attr("font-weight", "bold")
+              .attr("transform", "rotate(-10)");
 
               //ticks are added into the scales, here I specified 10 ticks for the scale of 15.
               svg.append("g")
               .attr("class", "axis axis--y")
               .call(d3.axisLeft(y))
+              .selectAll("text")  
+              .style("text-anchor", "end")
+              .attr("font-size", "14px")
+              .attr("font-weight", "bold");
 
 
               svg.append("text")
@@ -246,7 +252,7 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                         .attr("width", width + margin.left + margin.right)
                         .attr("height", height + margin.top + margin.bottom)
                         .append("g")
-                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")" );
+                        .attr("transform", "translate(" + margin.left  + "," + margin.top + ")" );
 
         var padding= 100;
     // using .bar to access the css file , to access the width of each band, bandwidth function is used
@@ -332,12 +338,21 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
               svg.append("g")
               .attr("class", "axis axis--x")
               .attr("transform", "translate(0," + height + ")")
-              .call(d3.axisBottom(x));
+              .call(d3.axisBottom(x))
+              .selectAll("text")  
+              .style("text-anchor", "end")
+              .attr("font-size", "14px")
+              .attr("font-weight", "bold")
+              .attr("transform", "rotate(-10)");
 
               //ticks are added into the scales, here I specified 10 ticks for the scale of 15.
               svg.append("g")
               .attr("class", "axis axis--y")
               .call(d3.axisLeft(y).ticks(10))
+              .selectAll("text")  
+              .style("text-anchor", "end")
+              .attr("font-size", "14px")
+              .attr("font-weight", "bold");
 
 
               svg.append("text")

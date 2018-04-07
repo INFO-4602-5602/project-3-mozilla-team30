@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Project 3 - Team 30</title>
+<title>Project 3</title>
 <style>body{background-color: #ffe0b3 }</style>
 <link rel="stylesheet" href="project3.css" type="text/css"/>
 
@@ -83,7 +83,7 @@
 
 
                     .on("mouseover",function(d,i) {
-                        d3.select(this).attr("style","fill:DarkRed ;stroke-width:3;stroke:DarkRed");   // Change color of the mouse fill when mouse is hovered over it
+                        d3.select(this).attr("style","fill:#FF9800");   // Change color of the mouse fill when mouse is hovered over it
 
                         tooltip.style("display", null)
 
@@ -91,7 +91,7 @@
                         .transition()
                         .duration(100)
                         .attr("r", 15)
-                        .style("fill", "red")
+                        .style("fill", "#FF9800")
 
                         tooltip.style("display", null);
 
@@ -116,13 +116,13 @@
                     .on("mousemove", function(d,i) {
                       var xPosition = d3.mouse(this)[0] - 35;
                       var yPosition = d3.mouse(this)[1] - 55;
-                      tooltip.attr("transform", "translate(" + (x(d.Country) + xPosition) + "," + yPosition + ")");
+                      tooltip.attr("transform", "translate(" + (x(d.Country)) + "," + yPosition + ")");
                       var text1 = d.Country
                       var text2 = d["Activity Tracker (ex: Fitbit or Apple Watch): Own"];
-                      tooltip.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*1.5))).text(text1);
+                      tooltip.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*0.8))).text(text1);
                       tooltip.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2))).text(text1);
                       tooltip.select("#text2").text(text2);
-                      tooltip.select("rect").attr("width",(text2.length*14));
+                      tooltip.select("rect").attr("width",(text1.length*8));
 
 
 
@@ -270,7 +270,7 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
 
 
                                         .on("mouseover",function(d,i) {
-                                            d3.select(this).attr("style","fill:DarkRed ;stroke-width:3;stroke:DarkRed");   // Change color of the mouse fill when mouse is hovered over it
+                                            d3.select(this).attr("style","fill:#FF9800");   // Change color of the mouse fill when mouse is hovered over it
 
                                             tooltip.style("display", null);
                                         })
@@ -291,13 +291,13 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                                         .on("mousemove", function(d,i) {
                                           var xPosition = d3.mouse(this)[0] - 35;
                                           var yPosition = d3.mouse(this)[1] - 55;
-                                          tooltip.attr("transform", "translate(" + (x(d.Country) + xPosition) + "," + yPosition + ")");
-                                          var text1 = d.Country
+                                          tooltip.attr("transform", "translate(" + (x(d.Country)) + "," + yPosition + ")");
+                                          var text1 = d.Country;
                                           var text2 = d["Activity Tracker (ex: Fitbit or Apple Watch): Own"];
-                                          tooltip.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*1.5))).text(text1);
+                                          tooltip.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*0.1))).text(text1);
                                           tooltip.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2))).text(text1);
                                           tooltip.select("#text2").text(text2);
-                                          tooltip.select("rect").attr("width",(text2.length*14));
+                                          tooltip.select("rect").attr("width",(text1.length*8));
 
 
 
@@ -310,7 +310,7 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                                           .style("display", "none");
 
                                         tooltip.append("rect")
-                                          .attr("width", 100)
+                                          .attr("width", 90)
                                           .attr("height", 40)
                                           .attr("fill", "black")
                                           .style("opacity", 1.0)

@@ -1,0 +1,37 @@
+body {
+  margin: 0;
+  margin-left: 20px;
+  font-family: 'Yanone Kaffeesatz', sans-serif;
+  font-weight: 200;
+  font-size: 17px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.point {
+    fill: #f00;
+    stroke: #000;
+}
+.bar {
+  fill: #3333cc;
+}
+
+.bar:hover {
+  fill: #FF9800DB;
+}
+
+.axis--x path {
+  display: none;
+}
+
+.label {
+    text-anchor: middle;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}

@@ -67,7 +67,7 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
          //console.log(mx);
     //usign map function to get the values in the x axis scale
       x.domain(data.map(function(d) { return d.Country; }));
-      y.domain([0,mx]);
+      y.domain([0,100]);
         //console.log(y.domain());
    //creating SVG object space in the part two div and accessing it using the div ID. Using transform/translate feature to tell which scales we want on svg
         svgLeft = d3.select("#BarChartReal")
@@ -134,8 +134,8 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                       var yPosition = d3.mouse(this)[1] - 55;
                       tooltip.attr("transform", "translate(" + (xPosition) + "," + yPosition + ")");
                       var text1 = d.Country
-                      var text2 = d["Smart phone: Own"];
-                      tooltip.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*1.5))).text(text1);
+                      var text2 = d["Smart phone: Own"]+"%";
+                      tooltip.select("#text1").attr("x",((text2.length*6)/2)- (text1.length*0.6)).text(text1);
                       tooltip.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2))).text(text1);
                       tooltip.select("#text2").text(text2);
                       tooltip.select("rect").attr("width",(text2.length*14));
@@ -149,14 +149,14 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                       bar2_y = parseFloat(bar2.attr("y"));
                       tooltip2 = d3.select(".tooltip2");
                       text1 = bar2.attr("country");
-                      text2 = bar2.attr("val");
+                      text2 = bar2.attr("val")+"%";
                       tooltip2.attr("transform", "translate(" + (parseFloat(bar2_x)-10) + "," + (parseFloat(bar2_y)+10) + ")");
-                      tooltip2.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*1.5)))
-                                               .text(text1)
-                                               .call(getTextBox);
+                      tooltip2.select("#text1").attr("x",((text2.length*6)/2)- (text1.length*0.6))
+                                               .text(text1);
+                                               
                       tooltip2.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2)))
-                                               .text(text2)
-                                               .call(getTextBox);                      
+                                               .text(text2);
+                                                                   
                     });
 
 
@@ -166,7 +166,7 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                       .style("display", "none");
 
                     tooltip.append("rect")
-                      .attr("width", 90)
+                      .attr("width", 45)
                       .attr("height", 40)
                       .attr("fill", "black")
                       .style("opacity", 1.0)
@@ -255,7 +255,7 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
 
     //usign map function to get the values in the x axis scale
       x.domain(data.map(function(d) { return d.Country; }));
-      y.domain([0,d3.max(data,function(d){return d["Smart TV: Own"];})]);
+      y.domain([0,100]);
 
    //creating SVG object space in the part two div and accessing it using the div ID. Using transform/translate feature to tell which scales we want on svg
         var svgRight = d3.select("#BarChartReal")
@@ -316,8 +316,8 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                     var yPosition = d3.mouse(this)[1] - 55;
                     tooltip.attr("transform", "translate(" + (xPosition) + "," + yPosition + ")");
                     var text1 = d.Country;
-                    var text2 = d["Smart TV: Own"];
-                    tooltip.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*1.5))).text(text1);
+                    var text2 = d["Smart TV: Own"]+"%";
+                    tooltip.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*0.6))).text(text1);
                     tooltip.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2))).text(text1);
                     tooltip.select("#text2").text(text2);
                     tooltip.select("rect").attr("width",(text2.length*14));
@@ -329,9 +329,9 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                     bar1_y = bar1.attr("y");
                     tooltip1 = d3.select(".tooltip1");
                     text1 = bar1.attr("country");
-                    text2 = bar1.attr("val");
+                    text2 = bar1.attr("val")+"%";
                     tooltip1.attr("transform", "translate(" + (parseFloat(bar1_x)-10) + "," + (parseFloat(bar1_y)+10) + ")");
-                    tooltip1.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*1.5))).text(text1);
+                    tooltip1.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*0.6))).text(text1);
                     tooltip1.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2)));
                     tooltip1.select("#text2").text(text2);
                   });
@@ -343,7 +343,7 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                     .style("display", "none");
 
                   tooltip.append("rect")
-                    .attr("width", 50)
+                    .attr("width", 45)
                     .attr("height", 40)
                     .attr("fill", "black")
                     .style("opacity", 1.0)

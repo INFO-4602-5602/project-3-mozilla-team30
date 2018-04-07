@@ -1,0 +1,414 @@
+<html>
+<head>
+<title>Project 3</title>
+
+<link rel="stylesheet" href="project3.css" type="text/css"/>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!--Put your D3 import statement between these two lines-->
+    <script src="https://d3js.org/d3.v4.js"></script>
+<!--Put your D3 import statement between these two lines-->
+</head>
+
+<body>
+
+    <div id="part six whistle">
+      <h1> Bar chart  </h1>
+      <p id="barchartLabel">   </p>
+      <br>  <br>  <br>  <br>
+    <div id="BarChartReal"> </div>
+    </div>
+
+    <script type="text/javascript">
+
+
+
+
+d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
+
+        if(error) throw error;
+        //Cleaning data by converting it using the forEach and parseFloat function
+
+        data.forEach(function(d){
+      //    d.x = parseFloat(d.x);
+          d.y = parseFloat(d["Smart phone: Own"]);
+        //  d.z= parseFloat(d["Population"]);
+        });
+        function GetTopFiveFit(arrayData){  //sorting to top 5 function
+
+          return arrayData.slice(0, 5);
+        }
+         data = GetTopFiveFit(data);
+
+      //defining the margins for the line graph
+       var margin={top:20, bottom:40, left:75, right:20};
+       //setting up the dimensions for the width and height of the visualization
+       var width= 600 - margin.left - margin.right;
+       var height= 500- margin.top- margin.bottom;
+
+       //mappign domain to the range using the scaleLinear function
+       //using scaleBand and rangeRound function, this function is specifically used for the bar chart mapping
+       var x = d3.scaleBand().rangeRound([0, width]).padding(0.07),
+            y= d3.scaleLinear().rangeRound([height,0]);
+//       var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+
+       var mx= d3.max(data,function(d){
+        console.log(d["Smart phone: Own"]);
+         return parseInt(d["Smart phone: Own"]);});
+         console.log(mx);
+    //usign map function to get the values in the x axis scale
+      x.domain(data.map(function(d) { return d.Country; }));
+      y.domain([0,mx]);
+        console.log(y.domain());
+   //creating SVG object space in the part two div and accessing it using the div ID. Using transform/translate feature to tell which scales we want on svg
+        var svg = d3.select("#BarChartReal")
+                        .append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")" );
+
+
+    // using .bar to access the css file , to access the width of each band, bandwidth function is used
+    // using rect shape instead of using the cirlcs
+                   svg.selectAll(".bar")
+                   .data(data)
+                   .enter().append("rect")
+          //        .filter(function(d) { return d["Activity Tracker (ex: Fitbit or Apple Watch): Own"] >990 }) //By using this function i am only exploring the data which is in the top five category
+                   .attr("class", "bar")
+                   .attr("id",function(d) { return ("#bar1-"+d.Country); })
+                   .attr("x", function(d) { return x(d.Country); })
+                   .attr("y",function(d)  {return  y(d["Smart phone: Own"]); })
+                    .attr("width", x.bandwidth())
+                    .attr("height", function(d) { return height - y(d["Smart phone: Own"]); })
+
+
+
+                    .on("mouseover",function(d,i) {
+                      d3.select(this).attr("style","fill:DarkRed ;stroke-width:3;stroke:DarkRed");   // Change color of the mouse fill when mouse is hovered over it
+
+                        tooltip.style("display", null)
+
+            /*            d3.select("#bar2-"+(Math.round(d.y)).toString())
+                        .transition()
+                        .duration(100)
+                        .attr("r", 15)
+                        .style("fill", "red")
+
+                        tooltip.style("display", null);    */
+
+                        d3.select(".tooltip2").style("display",null);
+
+                    })
+
+                    .on("mouseout", function(d,i){
+                        d3.select(this).attr("style", null);
+                        var ori_color = d3.select(this).attr("colorHidden")
+                        d3.select(this).style("fill",ori_color);
+
+                        tooltip.style("display", "none");
+
+                        d3.select(function(d) { return ("#bar2-"+d.Country); })
+                        .transition()
+                        .duration(100)
+                        .attr("r",10)
+              //          .style("fill", "orange")
+
+                         d3.select("#barchart svg g #tooltip").remove();
+                   //      d3.select("#bar1-"+(Math.round(c.y)).toString()).attr("fill","orange");   // Change color of the bar back to original in chart 1  when mouse is hovered over out of it
+                   //      d3.select("#bar2-"+(Math.round(c.y)).toString()).attr("fill","orange");
+                         tooltip.style("display", "none");
+                         d3.select(".tooltip2").style("display","none")
+
+                    })
+
+
+
+                    .on("mousemove", function(d,i) {
+                      var xPosition = d3.mouse(this)[0] - 35;
+                      var yPosition = d3.mouse(this)[1] - 55;
+                      tooltip.attr("transform", "translate(" + (x(d.Country) + xPosition) + "," + yPosition + ")");
+                      var text1 = d.Country
+                      var text2 = d["Smart phone: Own"];
+                      tooltip.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*1.5))).text(text1);
+                      tooltip.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2))).text(text1);
+                      tooltip.select("#text2").text(text2);
+                      tooltip.select("rect").attr("width",(text2.length*14));
+
+                      //console.log(("#bar2-"+d.Country));
+                      var bar2 = d3.select(("#bar2-"+d.Country));
+                      bar2_x = bar2.attr("x");
+                      bar2_y = bar2.attr("y");
+      //               bar2_x = parseFloat(bar2.attr("x"))
+                      bar2_y = parseFloat(bar2.attr("y"));
+                      tooltip2 = d3.select(".tooltip2");
+                      text1 = "X: "+bar2_x.toFixed(2);
+                      text2 = "Y: "+bar2_y;
+                      tooltip2.attr("transform", "translate(" + (parseFloat(bar2_cx)-10) + "," + (parseFloat(bar2_cy)+10) + ")");
+                      tooltip2.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*1.5))).text(text1);
+                      tooltip2.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2)));
+                      tooltip2.select("#text2").text(text2);
+                    });
+
+
+
+                    var tooltip = svg.append("g")
+                      .attr("class", "tooltip1")
+                      .style("display", "none");
+
+                    tooltip.append("rect")
+                      .attr("width", 90)
+                      .attr("height", 40)
+                      .attr("fill", "black")
+                      .style("opacity", 1.0)
+                      .attr("rx", 2)
+                      .attr("ry", 7);
+
+                    tooltip.append("text")
+                      .attr("dy", "1.2em")
+                      .attr("id", "text1")
+                      .attr('style','fill:White')
+                      .attr("font-size", "10px")
+                      .attr("font-weight", "bold");
+
+                    tooltip.append("text")
+                      .attr("dy", "2.5em")
+                      .attr("id", "text2")
+                      .attr('style','fill:White')
+                      .attr("font-size", "10px")
+                      .attr("font-weight", "bold");
+
+
+
+                      svg.append("text")
+                     .attr("text-anchor", "middle")
+                     .attr("font-weight", "bold")
+                     .attr("style","font-size: 14px;font-style: italic;")
+                     .attr("fill", "#000000")
+                     .attr("transform", "translate("+ (0-(margin.left/1.5)) +","+(height/2)+") rotate (-90)")  // text is drawn off the screen top left, move down and out and rotate
+                     .text("No of users Smartphone");
+
+
+                     svg.append("text")
+                     .attr("text-anchor", "middle")
+                     .attr("font-weight", "bold")
+                     .attr("style","font-size: 14px;font-style: italic;")
+                     .attr("fill", "#00000")
+                     .attr("transform", "translate("+ (width/2) +","+(height+(margin.bottom - margin.top) + 20)+")")  // centre below axis
+                     .text("Countries");
+              //Creating the y and x axis for the line graph
+              // properties from the css are being used using the class name
+
+                      svg.append("g")
+                      .attr("class", "axis axis--x")
+                      .attr("transform", "translate(0," + height + ")")
+                      .call(d3.axisBottom(x));
+
+              //ticks are added into the scales, here I specified 10 ticks for the scale of 15.
+                      svg.append("g")
+                      .attr("class", "axis axis--y")
+                      .call(d3.axisLeft(y))
+
+
+              });
+
+
+//second graph starts here.
+
+d3.csv("data/Mozilla Exported Dat_ Alia1.csv",function(error,data){
+
+        if(error) throw error;
+        //Cleaning data by converting it using the forEach and parseFloat function
+
+        data.forEach(function(d){
+      //    d.x = parseFloat(d.x);
+          d.y = parseFloat(d["Smart TV: Own"]);
+        //  d.z= parseFloat(d["Population"]);
+        });
+        function GetTopFiveFit(arrayData){  //sorting to top 5 function
+
+          return arrayData.slice(0, 5);
+        }
+         data = GetTopFiveFit(data);
+
+      //defining the margins for the line graph
+       var margin={top:20, bottom:40, left:75, right:20};
+       //setting up the dimensions for the width and height of the visualization
+       var width= 600 - margin.left - margin.right;
+       var height= 500- margin.top- margin.bottom;
+
+       //mappign domain to the range using the scaleLinear function
+       //using scaleBand and rangeRound function, this function is specifically used for the bar chart mapping
+       var x = d3.scaleBand().rangeRound([0, width]).padding(0.07),
+            y= d3.scaleLinear().rangeRound([height,0]);
+//       var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+
+
+    //usign map function to get the values in the x axis scale
+      x.domain(data.map(function(d) { return d.Country; }));
+      y.domain([0,d3.max(data,function(d){return d["Smart TV: Own"];})]);
+
+   //creating SVG object space in the part two div and accessing it using the div ID. Using transform/translate feature to tell which scales we want on svg
+        var svg = d3.select("#BarChartReal")
+                        .append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")" );
+
+
+    // using .bar to access the css file , to access the width of each band, bandwidth function is used
+    // using rect shape instead of using the cirlcs
+                   svg.selectAll(".bar")
+                   .data(data)
+                   .enter().append("rect")
+      //            .filter(function(d) { return d["Activity Tracker (ex: Fitbit or Apple Watch): Own"] <990 }) //By using this function i am only exploring the data which is in the top five category
+                   .attr("class", "bar")
+                   .attr("id",function(d) { return ("#bar2-"+d.Country); })
+                   .attr("x", function(d) { return x(d.Country); })
+                   .attr("y",function(d)  {return  y(d["Smart TV: Own"]); })
+                    .attr("width", x.bandwidth())
+                    .attr("height", function(d) { return height - y(d["Smart TV: Own"]); })
+
+
+                                        .on("mouseover",function(d,i) {
+                                  //          d3.select(this).attr("style","fill:DarkRed ;stroke-width:3;stroke:DarkRed");   // Change color of the mouse fill when mouse is hovered over it
+                                            d3.select(function(d) { return ("#bar1-"+d.Country); })
+                                            .transition()
+                                            .duration(100)
+                                            .attr("r",15);
+                                    //        .style("fill", "red")
+                                           //     .style("fill", "lightorange")
+                                            tooltip.style("display", null);
+
+                              /*              d3.select(".tooltip1").style("display",null);
+                                            tooltip.style("display", null); */
+                                        })
+
+                                        .on("mouseout", function(d,i){
+                                            d3.select(this).attr("style", null);
+                                            var ori_color = d3.select(this).attr("colorHidden")
+                                            d3.select(this).style("fill",ori_color);
+
+                                            tooltip.style("display", "none");
+
+
+                                            d3.select(function(d) { return ("#bar1-"+d.Country); })
+                                            .transition()
+                                            .duration(100)
+                                            .attr("r",10)
+                                            .style("fill", "orange");
+                                    //       .style("fill", "orange")
+
+                                            d3.select("#barchart svg g #tooltip").remove();
+                                            tooltip.style("display", "none");
+                                            d3.select(".tooltip1").style("display","none")
+                                        })
+
+
+
+                                        .on("mousemove", function(d,i) {
+                                          var xPosition = d3.mouse(this)[0] - 35;
+                                          var yPosition = d3.mouse(this)[1] - 55;
+                                          tooltip.attr("transform", "translate(" + (x(d.Country) + xPosition) + "," + yPosition + ")");
+                                          var text1 = d.Country
+                                          var text2 = d["Smart TV: Own"];
+                                          tooltip.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*1.5))).text(text1);
+                                          tooltip.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2))).text(text1);
+                                          tooltip.select("#text2").text(text2);
+                                          tooltip.select("rect").attr("width",(text2.length*14));
+
+
+                                          var bar1 = d3.select(function(d) { return ("#bar1-"+d.Country); });
+
+                                          bar1_x = bar1.attr("x");
+                                          bar1_y = bar1.attr("y");
+                                    //      bar1_x = parseFloat(bar1.attr("x"))
+                                          bar1_y = parseFloat(bar1.attr("y"));
+                                          tooltip1 = d3.select(".tooltip1");
+                                          text1 = "X: "+bar1_x.toFixed(2);
+                                          text2 = "Y: "+bar1_y;
+                                          tooltip1.attr("transform", "translate(" + (parseFloat(bar1_cx)-10) + "," + (parseFloat(bar1_cy)+10) + ")");
+                                          tooltip1.select("#text1").attr("x",((text2.length*6)/2 - (text1.length*1.5))).text(text1);
+                                          tooltip1.select("#text2").attr("x",((text2.length*6)/2 + 10 - ((text2.length*6) - (text2.length*6)/2)));
+                                          tooltip1.select("#text2").text(text2);
+                                        });
+
+
+
+                                        var tooltip = svg.append("g")
+                                          .attr("class", "tooltip2")
+                                          .style("display", "none");
+
+                                        tooltip.append("rect")
+                                          .attr("width", 50)
+                                          .attr("height", 40)
+                                          .attr("fill", "black")
+                                          .style("opacity", 1.0)
+                                          .attr("rx", 2)
+                                          .attr("ry", 7);
+
+                                        tooltip.append("text")
+                                          .attr("dy", "1.2em")
+                                          .attr("id", "text1")
+                                          .attr('style','fill:White')
+                                          .attr("font-size", "10px")
+                                          .attr("font-weight", "bold");
+
+                                        tooltip.append("text")
+                                          .attr("dy", "2.5em")
+                                          .attr("id", "text2")
+                                          .attr('style','fill:White')
+                                          .attr("font-size", "10px")
+                                          .attr("font-weight", "bold");
+
+
+              //Creating the y and x axis for the line graph
+              // properties from the css are being used using the class name
+
+              svg.append("g")
+              .attr("class", "axis axis--x")
+              .attr("transform", "translate(0," + height + ")")
+              .call(d3.axisBottom(x));
+
+
+              svg.append("text")
+             .attr("text-anchor", "middle")
+             .attr("font-weight", "bold")
+             .attr("style","font-size: 14px;font-style: italic;")
+             .attr("fill", "#000000")
+             .attr("transform", "translate("+ (0-(margin.left/2)) +","+(height/2)+") rotate (-90)")  // text is drawn off the screen top left, move down and out and rotate
+             .text("No of users SmartTV");
+
+
+             svg.append("text")
+                      .attr("text-anchor", "middle")
+                      .attr("font-weight", "bold")
+                      .attr("style","font-size: 14px;font-style: italic;")
+                      .attr("fill", "#00000")
+                      .attr("transform", "translate("+ (width/2) +","+(height+(margin.bottom - margin.top) + 20)+")")  // centre below axis
+                      .text("Countries");
+
+/*
+              svg.append("text")
+                 .attr("x",(width /2))
+                 .attr("y",(margin-top /2))
+                 .attr("text-anchor","right")
+                 .style("font-size","14.5px")
+                 .attr("font-weight", "bold")
+                 .text("Fitbit users top five countries below average");
+
+*/
+              //ticks are added into the scales, here I specified 10 ticks.
+              svg.append("g")
+              .attr("class", "axis axis--y")
+              .call(d3.axisLeft(y).ticks(10))
+
+
+              });
+
+    </script>
+</body>
+
+
+</html>

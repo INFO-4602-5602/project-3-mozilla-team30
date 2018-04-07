@@ -1,7 +1,7 @@
 <html>
 <head>
-<title>Project 3</title>
-
+<title>Project 3 - Team 30</title>
+<style>body{background-color: #ffe0b3 }</style>
 <link rel="stylesheet" href="project3.css" type="text/css"/>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -11,9 +11,10 @@
 </head>
 
 <body>
-
+    <a href="index.html"> <- Back to Home </a> <br/>
     <div id="part six whistle">
-      <h1> Bar chart  </h1>
+      <h1> Relationship between Top 5 countries in terms of SmartTV and Smartphone  </h1>
+      <br/>
       <p id="barchartLabel">   </p>
       <br>  <br>  <br>  <br>
     <div id="BarChartReal"> </div>
@@ -193,7 +194,7 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                      .attr("text-anchor", "middle")
                      .attr("font-weight", "bold")
                      .attr("style","font-size: 14px;font-style: italic;")
-                     .attr("fill", "#000000")
+                     .attr("fill", "#cc0066")
                      .attr("transform", "translate("+ (0-(margin.left/1.5)) +","+(height/2)+") rotate (-90)")  // text is drawn off the screen top left, move down and out and rotate
                      .text("No of users Smartphone");
 
@@ -202,7 +203,7 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                      .attr("text-anchor", "middle")
                      .attr("font-weight", "bold")
                      .attr("style","font-size: 14px;font-style: italic;")
-                     .attr("fill", "#00000")
+                     .attr("fill", "#cc0066")
                      .attr("transform", "translate("+ (width/2) +","+(height+(margin.bottom - margin.top) + 20)+")")  // centre below axis
                      .text("Countries");
               //Creating the y and x axis for the line graph
@@ -211,12 +212,22 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                       svgLeft.append("g")
                       .attr("class", "axis axis--x")
                       .attr("transform", "translate(0," + height + ")")
-                      .call(d3.axisBottom(x));
+                      .call(d3.axisBottom(x))
+                      .selectAll("text")  
+                      .style("text-anchor", "end")
+                      .attr("font-size", "14px")
+                      .attr("font-weight", "bold")            
+                      .attr("transform", "rotate(-30)");
 
               //ticks are added into the scales, here I specified 10 ticks for the scale of 15.
                       svgLeft.append("g")
                       .attr("class", "axis axis--y")
                       .call(d3.axisLeft(y))
+                      .selectAll("text")  
+                      .style("text-anchor", "end")
+                      .attr("font-size", "14px")
+                      .attr("font-weight", "bold")            
+                      .attr("transform", "rotate(-30)");
 
 
               });
@@ -371,14 +382,19 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
               svgRight.append("g")
               .attr("class", "axis axis--x")
               .attr("transform", "translate(0," + height + ")")
-              .call(d3.axisBottom(x));
+              .call(d3.axisBottom(x))
+              .selectAll("text")  
+              .style("text-anchor", "end")
+              .attr("font-size", "14px")
+              .attr("font-weight", "bold")            
+              .attr("transform", "rotate(-30)");;
 
 
               svgRight.append("text")
              .attr("text-anchor", "middle")
              .attr("font-weight", "bold")
              .attr("style","font-size: 14px;font-style: italic;")
-             .attr("fill", "#000000")
+             .attr("fill", "#cc0066")
              .attr("transform", "translate("+ (0-(margin.left/2)) +","+(height/2)+") rotate (-90)")  // text is drawn off the screen top left, move down and out and rotate
              .text("No of users SmartTV");
 
@@ -387,7 +403,7 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
                       .attr("text-anchor", "middle")
                       .attr("font-weight", "bold")
                       .attr("style","font-size: 14px;font-style: italic;")
-                      .attr("fill", "#00000")
+                      .attr("fill", "#cc0066")
                       .attr("transform", "translate("+ (width/2) +","+(height+(margin.bottom - margin.top) + 20)+")")  // centre below axis
                       .text("Countries");
 
@@ -405,6 +421,10 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
               svgRight.append("g")
               .attr("class", "axis axis--y")
               .call(d3.axisLeft(y).ticks(10))
+              .selectAll("text")  
+              .style("text-anchor", "end")
+              .attr("font-size", "14px")
+              .attr("font-weight", "bold");
 
 
               });

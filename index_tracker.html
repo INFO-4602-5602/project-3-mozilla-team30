@@ -39,7 +39,7 @@
          data = GetTopFiveFit(data);
 
       //defining the margins for the line graph
-       var margin={top:20, bottom:40, left:60, right:20};
+       var margin={top:20, bottom:60, left:75, right:20};
        //setting up the dimensions for the width and height of the visualization
        var width= 600 - margin.left - margin.right;
        var height= 500- margin.top- margin.bottom;
@@ -161,7 +161,7 @@
 
 
                       svg.append("text")
-              .attr("text-anchor", "middle")  
+              .attr("text-anchor", "middle")
               .attr("style","font-size: 20px;font-style: italic;")
               .attr("font-weight", "bold")
               .attr("fill", "#cc0066")
@@ -170,7 +170,7 @@
 
 
                      svg.append("text")
-                     .attr("text-anchor", "middle")  
+                     .attr("text-anchor", "middle")
                      .attr("style","font-size: 20px;font-style: italic;")
                      .attr("font-weight", "bold")
                      .attr("fill", "#cc0066")
@@ -185,7 +185,7 @@
               .attr("class", "axis axis--x")
               .attr("transform", "translate(0," + height + ")")
               .call(d3.axisBottom(x))
-              .selectAll("text")  
+              .selectAll("text")
               .style("text-anchor", "end")
               .attr("font-size", "14px")
               .attr("font-weight", "bold")
@@ -195,7 +195,7 @@
               svg.append("g")
               .attr("class", "axis axis--y")
               .call(d3.axisLeft(y))
-              .selectAll("text")  
+              .selectAll("text")
               .style("text-anchor", "end")
               .attr("font-size", "14px")
               .attr("font-weight", "bold");
@@ -230,7 +230,7 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
          data = GetLastFiveFit(data);
 
       //defining the margins for the line graph
-       var margin={top:20, bottom:40, left:50, right:20};
+       var margin={top:20, bottom:60, left:75, right:20};
        //setting up the dimensions for the width and height of the visualization
        var width= 700 - margin.left - margin.right;
        var height= 500- margin.top- margin.bottom;
@@ -339,7 +339,7 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
               .attr("class", "axis axis--x")
               .attr("transform", "translate(0," + height + ")")
               .call(d3.axisBottom(x))
-              .selectAll("text")  
+              .selectAll("text")
               .style("text-anchor", "end")
               .attr("font-size", "14px")
               .attr("font-weight", "bold")
@@ -349,14 +349,14 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
               svg.append("g")
               .attr("class", "axis axis--y")
               .call(d3.axisLeft(y).ticks(10))
-              .selectAll("text")  
+              .selectAll("text")
               .style("text-anchor", "end")
               .attr("font-size", "14px")
               .attr("font-weight", "bold");
 
 
               svg.append("text")
-              .attr("text-anchor", "middle")  
+              .attr("text-anchor", "middle")
               .attr("style","font-size: 20px;font-style: italic;")
               .attr("font-weight", "bold")
               .attr("fill", "#cc0066")
@@ -365,12 +365,12 @@ d3.csv("Mozilla Exported Dat_ Alia1.csv",function(error,data){
 
 
              svg.append("text")
-              .attr("text-anchor", "middle")  
+              .attr("text-anchor", "middle")
               .attr("style","font-size: 20px;font-style: italic;")
               .attr("font-weight", "bold")
               .attr("fill", "#cc0066")
               .attr("transform", "translate("+ (width/2) +","+(height+(margin.bottom - margin.top) + 15)+")")  // centre below axis
-              .text("Country");
+              .text("Countries");
 
 
               svg.append("text")
